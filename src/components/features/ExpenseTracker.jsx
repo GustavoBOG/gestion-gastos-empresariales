@@ -9,7 +9,7 @@ import { Modal } from '../common/Modal';
 import { downloadCSV, generateWhatsappText } from '../../utils/export';
 
 export const ExpenseTracker = ({ config, onBack }) => {
-    const { tickets, addTicket, addMultipleTickets, updateTicket, deleteTicket, clearTickets } = useTickets();
+    const { tickets, addTicket, addMultipleTickets, updateTicket, updateGroup, deleteTicket, deleteGroup, clearTickets } = useTickets();
     const { workers } = useWorkers();
 
     const [currentWorker, setCurrentWorker] = useState(config.selectedWorkers[0] || '');
@@ -38,8 +38,21 @@ export const ExpenseTracker = ({ config, onBack }) => {
     };
 
     const handleDeleteGroup = (groupId) => {
-        const ticketsToDelete = tickets.filter(t => t.ticketGroup == groupId);
-        ticketsToDelete.forEach(t => deleteTicket(t.id));
+        deleteGroup(groupId);
+    };
+
+    const handleAddTicketToGroup = (groupId, ticketData) => {
+        // Encontrar un ticket del grupo para copiar metadatos (restaurante, worker, date)
+        const groupTicket = tickets.find(t => t.ticketGroup == groupId);
+        if (groupTicket) {
+            addTicket({
+                ...ticketData,
+                restaurant: groupTicket.restaurant,
+                worker: groupTicket.worker,
+                date: groupTicket.date,
+                ticketGroup: groupId
+            });
+        }
     };
 
     const handleDownloadCSV = () => {
@@ -111,6 +124,7 @@ export const ExpenseTracker = ({ config, onBack }) => {
                         onUpdateTicket={updateTicket}
                         onDeleteTicket={deleteTicket}
                         onDeleteGroup={handleDeleteGroup}
+                        onAddTicketToGroup={handleAddTicketToGroup}
                         onClearAll={clearTickets}
                     />
 

@@ -44,8 +44,20 @@ export const useTickets = () => {
         saveTickets(newTickets);
     };
 
+    const updateGroup = (groupId, updates) => {
+        const newTickets = tickets.map(ticket =>
+            ticket.ticketGroup == groupId ? { ...ticket, ...updates } : ticket
+        );
+        saveTickets(newTickets);
+    };
+
     const deleteTicket = (id) => {
         const newTickets = tickets.filter(ticket => ticket.id !== id);
+        saveTickets(newTickets);
+    };
+
+    const deleteGroup = (groupId) => {
+        const newTickets = tickets.filter(ticket => ticket.ticketGroup != groupId);
         saveTickets(newTickets);
     };
 
@@ -62,7 +74,9 @@ export const useTickets = () => {
         addTicket,
         addMultipleTickets,
         updateTicket,
+        updateGroup,
         deleteTicket,
+        deleteGroup,
         clearTickets,
         getTotal
     };
